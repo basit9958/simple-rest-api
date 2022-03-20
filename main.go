@@ -1,19 +1,37 @@
 package main
 
-  import (
-   "fmt"
-   "log"
-   "net/http"
-  )
+import (
+	"encoding/json"
+	"fmt"
+	"log"
+	"net/http"
+)
 
-func homePage(w http.ResponseWriter, r *http.Request){
-	fmt.Fprintf(w,"Homepage Endpoint Hit")
+type Song struct {
+	Title   string `json:"Title"`
+	Desc    string `json:"dec"`
+	Content string `json:"content"`
 }
 
-func handleRequests(){
+type Songs []Song
+
+func allSongs(w http.ResponseWriter, r *http.Request) {
+	articles := Songs{
+		Song{Title: "Test Title", Desc: "Test Description", Content: "Test Content"},
+	}
+	fmt.Println("Endpoint Hit: All Songs Endpoint")
+	json.NewEncoder(w).Encode(articles)
+}
+
+func homePage(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Homepage Endpoint Hit")
+}
+
+func handleRequests() {
 	http.HandleFunc("/", homePage)
-	log.Fatal(http.ListenAndServe(":8081",nil))
+	http.HandleFunc("/article",allSongs)
+	log.Fatal(http.ListenAndServe(":8081", nil))
 }
-func main(){
+func main() {
 	handleRequests()
 }
